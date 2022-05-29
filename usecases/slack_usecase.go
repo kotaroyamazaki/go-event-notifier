@@ -3,7 +3,6 @@ package usecases
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/KotaroYamazaki/go-event-notifier/entites"
 	"github.com/KotaroYamazaki/go-event-notifier/pkg/slack"
@@ -14,10 +13,10 @@ type SlackUsecase interface {
 }
 
 type slackUsecase struct {
-	slackClient *slack.Client
+	slackClient slack.SlackClient
 }
 
-func NewSlackUsecase(slackClient *slack.Client) *slackUsecase {
+func NewSlackUsecase(slackClient slack.SlackClient) *slackUsecase {
 	return &slackUsecase{
 		slackClient: slackClient,
 	}
@@ -56,7 +55,7 @@ func (uc *slackUsecase) Notify(ctx context.Context, appLog *entites.AppLog) erro
 			AddField("Caller", fmt.Sprintf("`%s`", appLog.JsonPayload.Caller)).
 			AddField("Message", fmt.Sprintf("```%s```", appLog.JsonPayload.Message))
 	default:
-		log.Println("Unknown resource type: " + appLog.Resource.Type)
+		return fmt.Errorf("Unknown resource type: %s\n", appLog.Resource.Type)
 	}
 
 	msg := &slack.SlackMessage{

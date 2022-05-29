@@ -14,30 +14,34 @@ const (
 	ResourceTypeAppEngine     resourceType = "gae_app"
 )
 
+type JsonPayload struct {
+	Message     string `json:"error"`
+	FirebaseUID string `json:"firebase_uid"`
+	AppVersion  string `json:"app_version"`
+	Caller      string `json:"caller"`
+}
+
+type Labels struct {
+	ProjectID    string `json:"project_id"`
+	RevisionName string `json:"revision_name"`
+	ServiceName  string `json:"service_name"`
+	FunctionName string `json:"function_name"`
+	ExecutionID  string `json:"execution_id"`
+	VersionID    string `json:"version_id"`
+	ModuleID     string `json:"module_id"`
+}
+type Resource struct {
+	Type   resourceType `json:"type"`
+	Labels Labels       `json:"labels"`
+}
 type AppLog struct {
-	InsertID    string `json:"insertId"`
-	JsonPayload struct {
-		Message     string `json:"error"`
-		FirebaseUID string `json:"firebase_uid"`
-		AppVersion  string `json:"app_version"`
-		Caller      string `json:"caller"`
-	} `json:"jsonPayload"`
-	Resource struct {
-		Type   resourceType `json:"type"`
-		Labels struct {
-			ProjectID    string `json:"project_id"`
-			RevisionName string `json:"revision_name"`
-			ServiceName  string `json:"service_name"`
-			FunctionName string `json:"function_name"`
-			ExecutionID  string `json:"execution_id"`
-			VersionID    string `json:"version_id"`
-			ModuleID     string `json:"module_id"`
-		} `json:"labels"`
-	} `json:"resource"`
-	TextPayload string `json:"textPayload"`
-	Timestamp   string `json:"timestamp"`
-	Severity    string `json:"severity"`
-	Trace       string `json:"trace"`
+	InsertID    string      `json:"insertId"`
+	JsonPayload JsonPayload `json:"jsonPayload"`
+	Resource    Resource    `json:"resource"`
+	TextPayload string      `json:"textPayload"`
+	Timestamp   string      `json:"timestamp"`
+	Severity    string      `json:"severity"`
+	Trace       string      `json:"trace"`
 }
 
 func (a *AppLog) MakeLoggingURL() string {

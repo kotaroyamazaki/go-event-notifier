@@ -7,18 +7,23 @@ import (
 	"net/url"
 )
 
-type Client struct {
+type SlackClient interface {
+	Notify() error
+	SetMessage(msg *SlackMessage) SlackClient
+}
+
+type slackClient struct {
 	webhookURL string
 	msg        *SlackMessage
 }
 
-func New(webhookURL string) *Client {
-	return &Client{
+func New(webhookURL string) SlackClient {
+	return &slackClient{
 		webhookURL: webhookURL,
 	}
 }
 
-func (c *Client) Notify() error {
+func (c *slackClient) Notify() error {
 	payload, err := json.Marshal(c.msg)
 	if err != nil {
 		return err
@@ -44,7 +49,7 @@ func (c *Client) Notify() error {
 	return nil
 }
 
-func (c *Client) SetMessage(msg *SlackMessage) *Client {
+func (c *slackClient) SetMessage(msg *SlackMessage) SlackClient {
 	c.msg = msg
 	return c
 }
