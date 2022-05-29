@@ -12,9 +12,9 @@ type NotifierHandler struct {
 	notifier entites.Notifier
 }
 
-func NewNotifierHandler(slackNotifier entites.Notifier) *NotifierHandler {
+func NewNotifierHandler(notifier entites.Notifier) *NotifierHandler {
 	return &NotifierHandler{
-		notifier: slackNotifier,
+		notifier: notifier,
 	}
 }
 
