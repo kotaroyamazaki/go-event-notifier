@@ -8,7 +8,7 @@ CloudRun にデプロイして PubSub から受け取った特定のイベント
 
 1. 環境の設定
 
-```
+``` bash
 gcloud auth login
 ENV={dev|prd}
 PROJECT_ID=sample-$ENV
@@ -17,7 +17,7 @@ gcloud config set project $PROJECT_ID
 
 2. Container Registory へ image の push
 
-```
+``` bash
 IMAGE_NAME=sample-logging-notifer-$ENV
 gcloud builds submit --tag gcr.io/$PROJECT_ID/$IMAGE_NAME
 ```
@@ -36,18 +36,18 @@ Cloud Run サービスデプロイ後、メッセージを push するように 
 PROJECT_NUMBER は gcp console から確認する
 ※はじめの一回のみ
 
-```
+``` bash
 gcloud projects add-iam-policy-binding $PROJECT_ID \
      --member=serviceAccount:service-$PROJECT_NUMBER@gcp-sa-pubsub.iam.gserviceaccount.com \
      --role=roles/iam.serviceAccountTokenCreator
 ```
 
-```
+``` bash
 gcloud iam service-accounts create cloud-run-pubsub-invoker \
      --display-name "Cloud Run Pub/Sub Invoker"
 ```
 
-```
+``` bash
 gcloud run services add-iam-policy-binding $IMAGE_NAME \
    --member=serviceAccount:cloud-run-pubsub-invoker@$PROJECT_ID.iam.gserviceaccount.com \
    --role=roles/run.invoker
@@ -55,7 +55,7 @@ gcloud run services add-iam-policy-binding $IMAGE_NAME \
 
 ## PubSub Subscription の設定
 
-```
+``` bash
 gcloud pubsub topics create cloudlogging
 $ENDOPOINT={https://...}
 gcloud pubsub subscriptions create error-sub --topic cloudlogging \
@@ -69,7 +69,7 @@ gcloud pubsub subscriptions create error-sub --topic cloudlogging \
 
 GCP コンソールの`logging` から`ログルーター` を選択し、以下の条件で PUbSub のトピックにレベルがエラー以上のものを push するように設定する
 
-```
+``` bash
 resource.type = cloud_run_revision AND severity >= ERROR
 ```
 
@@ -77,6 +77,6 @@ resource.type = cloud_run_revision AND severity >= ERROR
 
 .env の`SLACK_WEBHOOK_TEST_URL`にテスト送信先の WEBHOOK URL を設定
 
-```
+``` bash
 go test -run ./logging/
 ```
